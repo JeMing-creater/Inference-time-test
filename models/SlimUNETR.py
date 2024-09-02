@@ -151,6 +151,7 @@ class Decoder(nn.Module):
 
     def forward(self, x, hidden_states_out, x_shape):
         B, C, W, H, Z = x_shape
+        # time.sleep(0.01)
         x = x.reshape(B, C, W, H, Z)
         x = self.block4(x)
         x = self.TSconv1(x)

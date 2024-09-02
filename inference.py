@@ -15,13 +15,12 @@ from models.SlimUNETRv2 import SlimUNETR as SlimUNETRv2
 def test_weight(model, device):
     time.sleep(3)
     model = model.to(device)
-    model.eval()
+    # model.eval()
+    torch.cuda.synchronize()
     try:
-        x = torch.ones(size=(1, 4, 128, 128, 128)).to(device)
+        x = torch.zeros(size=(1, 4, 128, 128, 128)).to(device)
         for i in range(0, 3):
             _ = model(x)
-        torch.cuda.synchronize()
-        x = torch.rand(size=(1, 4, 128, 128, 128)).to(device)
         start_time = time.time()
         _ = model(x)
         end_time = time.time()
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     inference_times(name, model, device)
     # SegResNet
     name = "SegResNet"
-    model = SegResNet(spatial_dims=3, init_filters=24, in_channels=4, out_channels=3)
+    model = SegResNet(spatial_dims=3, init_filters=24, in_channels=4, out_channels=3, blocks_up=(4, 4, 4))
     inference_times(name, model, device)
     # Swin UNETR
     name = "Swin UNETR"
@@ -77,11 +76,11 @@ if __name__ == "__main__":
     # SlimUNETR
     name = "SlimUNETR"
     model = SlimUNETR(in_channels=4, out_channels=3, embed_dim=96,embedding_dim=64, channels=(24, 48, 60),
-                        blocks=(1, 2, 4, 4), heads=(1, 2, 4, 4), r=(4, 2, 2, 1), distillation=False,
+                        blocks=(2, 2, 4, 4), heads=(1, 2, 4, 4), r=(4, 2, 2, 1), distillation=False,
                         dropout=0.3)
     inference_times(name, model, device)
     # SlimUNETRv2
     name = "SlimUNETR v2"
-    model = SlimUNETRv2(in_chans=4, out_chans=3, kernel_sizes=[4, 2, 2, 2], depths=[2, 2, 2, 2], dims=[48, 96, 192, 384], heads=[1, 2, 4, 4], hidden_size=768, num_slices_list = [64, 32, 16, 8],
+    model = SlimUNETRv2(in_chans=4, out_chans=3, kernel_sizes=[4, 2, 2, 1], depths=[2, 2, 2, 2], dims=[48, 96, 192, 384], heads=[1, 2, 4, 4], hidden_size=768, num_slices_list = [64, 32, 16, 8],
                  drop_path_rate=0., layer_scale_init_value=1e-6, out_indices=[0, 1, 2, 3])
     inference_times(name, model, device)

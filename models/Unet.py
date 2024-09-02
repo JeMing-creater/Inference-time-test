@@ -60,7 +60,7 @@ class Up(nn.Module):
     def forward(self, x1, x2):
         x1 = self.up(x1)
         x = torch.cat([x2, x1], dim=1)
-        time.sleep(0.05)
+        time.sleep(0.1)
         x = self.conv(x)
         return x
 

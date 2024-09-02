@@ -31,7 +31,7 @@ class UNETR(nn.Module):
         in_channels: int,
         out_channels: int,
         img_size: Tuple[int, int, int],
-        feature_size: int = 16,
+        feature_size: int = 32,
         hidden_size: int = 768,
         mlp_dim: int = 3072,
         num_heads: int = 12,
@@ -183,7 +183,7 @@ class UNETR(nn.Module):
 
     def proj_feat(self, x, hidden_size, feat_size):
         x = x.view(x.size(0), feat_size[0], feat_size[1], feat_size[2], hidden_size)
-        time.sleep(0.05)
+        # time.sleep(0.05)
         x = x.permute(0, 4, 1, 2, 3).contiguous()
         return x
 
