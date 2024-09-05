@@ -15,20 +15,23 @@ from models.SlimUNETRv2 import SlimUNETR as SlimUNETRv2
 def test_weight(model, device):
     time.sleep(3)
     model = model.to(device)
-    # model.eval()
+    model.eval()
     torch.cuda.synchronize()
     try:
-        x = torch.zeros(size=(1, 4, 128, 128, 128)).to(device)
-        for i in range(0, 3):
-            _ = model(x)
-        start_time = time.time()
-        _ = model(x)
-        end_time = time.time()
-        need_time = end_time - start_time
-        # print(need_time)
-        flops, params = profile(model, inputs=(x,))
-        throughout = round( x.shape[0] / (need_time), 3)
-        return flops, params, throughout
+        with torch.inference_mode():
+            x = torch.zeros(size=(1, 4, 128, 128, 128)).to(device)
+            for i in range(0, 3):
+                _ = model(x)
+            start_time = time.time()
+            x = torch.randn(size=(1, 4, 128, 128, 128)).to(device)
+            for i in range(0, 3):
+                _ = model(x)
+            end_time = time.time()
+            need_time = end_time - start_time
+            # print(need_time)
+            flops, params = profile(model, inputs=(x,))
+            throughout = round( x.shape[0] / (need_time / 3), 3)
+            return flops, params, throughout
     except torch.cuda.OutOfMemoryError as e:
         print(f'{e}')
         return 0,0,0
@@ -81,6 +84,6 @@ if __name__ == "__main__":
     inference_times(name, model, device)
     # SlimUNETRv2
     name = "SlimUNETR v2"
-    model = SlimUNETRv2(in_chans=4, out_chans=3, kernel_sizes=[4, 2, 2, 1], depths=[2, 2, 2, 2], dims=[48, 96, 192, 384], heads=[1, 2, 4, 4], hidden_size=768, num_slices_list = [64, 32, 16, 8],
+    model = SlimUNETRv2(in_chans=4, out_chans=3, kernel_sizes=[4, 2, 2, 1], depths=[1, 1, 1, 1], dims=[48, 96, 192, 384], heads=[1, 2, 2, 2], hidden_size=768, num_slices_list = [64, 32, 16, 8],
                  drop_path_rate=0., layer_scale_init_value=1e-6, out_indices=[0, 1, 2, 3])
     inference_times(name, model, device)
