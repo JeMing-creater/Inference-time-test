@@ -71,7 +71,7 @@ class LayerNorm(nn.Module):
 
 
 class MambaLayer(nn.Module):
-    def __init__(self, dim, d_state=16, d_conv=4, expand=2, num_slices=None,device='cpu'):
+    def __init__(self, dim, d_state=1, d_conv=4, expand=1, num_slices=None,device='cpu'):
         super().__init__()
         self.dim = dim
         self.norm = nn.LayerNorm(dim)
@@ -448,19 +448,19 @@ if __name__ == '__main__':
     flops, param, throughout = atest_weight(model, x)
     Unitconversion(flops, param, throughout)
     x = torch.rand(size=(1, 4, 128, 128, 128)).to(device)
-    name="slimuetrv2_1.onnx"
-    torch.onnx.export(model,  # 模型的名称
-                      x,  # 一组实例化输入
-                      name,  # 文件保存路径/名称
-                      export_params=True,  # 如果指定为True或默认, 参数也会被导出. 如果你要导出一个没训练过的就设为 False.
-                      opset_version=17,  # ONNX 算子集的版本，当前已更新到15
-                      do_constant_folding=True,  # 是否执行常量折叠优化
-                      input_names=['input'],  # 输入模型的张量的名称
-                      output_names=['output'],  # 输出模型的张量的名称
-                      # dynamic_axes将batch_size的维度指定为动态，
-                      # 后续进行推理的数据可以与导出的dummy_input的batch_size不同
-                      )
-    print(f"Model has been converted to ONNX and saved as '{name}'")
+    # name="slimuetrv2_1.onnx"
+    # torch.onnx.export(model,  # 模型的名称
+    #                   x,  # 一组实例化输入
+    #                   name,  # 文件保存路径/名称
+    #                   export_params=True,  # 如果指定为True或默认, 参数也会被导出. 如果你要导出一个没训练过的就设为 False.
+    #                   opset_version=17,  # ONNX 算子集的版本，当前已更新到15
+    #                   do_constant_folding=True,  # 是否执行常量折叠优化
+    #                   input_names=['input'],  # 输入模型的张量的名称
+    #                   output_names=['output'],  # 输出模型的张量的名称
+    #                   # dynamic_axes将batch_size的维度指定为动态，
+    #                   # 后续进行推理的数据可以与导出的dummy_input的batch_size不同
+    #                   )
+    # print(f"Model has been converted to ONNX and saved as '{name}'")
 
 
 

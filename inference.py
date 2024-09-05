@@ -3,6 +3,7 @@ import torch
 from thop import profile
 
 from models.Unet import UNet
+from models.Unet3d import UNet3D
 from models.Unetr import UNETR
 from monai.networks.nets import SegResNet
 from monai.networks.nets import SwinUNETR
@@ -54,7 +55,8 @@ if __name__ == "__main__":
     
     # U-Net
     name = "U-Net"
-    model = UNet(in_channels=4, num_classes=3)
+    # model = UNet(in_channels=4, num_classes=3)
+    model = UNet3D()
     inference_times(name, model, device)
     # UNETR
     name = "UNETR"
