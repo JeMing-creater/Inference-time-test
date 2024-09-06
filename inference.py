@@ -24,8 +24,8 @@ def test_weight(model, device):
             for i in range(0, 3):
                 _ = model(x)
                 torch.cuda.synchronize()
-            start_time = time.time()
             x = torch.randn(size=(1, 4, 128, 128, 128)).to(device)
+            start_time = time.time()
             torch.cuda.synchronize()
             for i in range(0, 3):
                 _ = model(x)
