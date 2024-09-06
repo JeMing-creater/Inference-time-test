@@ -17,16 +17,19 @@ def test_weight(model, device):
     time.sleep(3)
     model = model.to(device)
     model.eval()
-    torch.cuda.synchronize()
     try:
         with torch.inference_mode():
             x = torch.zeros(size=(1, 4, 128, 128, 128)).to(device)
+            torch.cuda.synchronize()
             for i in range(0, 3):
                 _ = model(x)
+                torch.cuda.synchronize()
             start_time = time.time()
             x = torch.randn(size=(1, 4, 128, 128, 128)).to(device)
+            torch.cuda.synchronize()
             for i in range(0, 3):
                 _ = model(x)
+                torch.cuda.synchronize()
             end_time = time.time()
             need_time = end_time - start_time
             # print(need_time)
